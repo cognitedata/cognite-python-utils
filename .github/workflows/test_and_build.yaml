@@ -1,0 +1,45 @@
+name: test_and_build
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        python-version: [3.8]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - uses: actions/cache@v2
+      with:
+        path: ${{ env.pythonLocation }}
+        key: ${{ env.pythonLocation }}-${{ hashFiles('pyproject.toml') }}
+
+    - name: Install dependencies
+      run: |
+        python3 -m pip install --upgrade pip poetry
+        poetry config virtualenvs.create false
+        poetry install
+
+    - name: Check codestyle
+      run: |
+        pre-commit run --all-files
+
+    - name: Run tests
+      run: |
+        pytest -v tests
+
+    - name: Build package
+      run: poetry build

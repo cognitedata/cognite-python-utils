@@ -1,0 +1,601 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "acae66af",
+   "metadata": {},
+   "source": [
+    "# Entity Match Categorizer"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a210016f",
+   "metadata": {},
+   "source": [
+    "Although entity matching in SDK offers greater flexibility, its utility is constrained by the lack of an easy way to group matches by pattern. As experience tells, strict reliance on the confidence score may be misleading; some matches have low confidence scores but in fact high-quality, while the reverse is the case for others. Hence, we need to pay attention to patterns underlying the matches. In this script, I demonstrate an entity match categorizer which helps to reproduce the \"group by pattern\" feature in UI, making SDK-based entity matching more effective."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "aac9b1b5",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import os\n",
+    "from cognite.experimental import CogniteClient\n",
+    "from cognite.utils.contextualization import EntityMatchCategorizer"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e0e5c675",
+   "metadata": {},
+   "source": [
+    "## Setup"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f04e7c14",
+   "metadata": {},
+   "source": [
+    "First, let's set things up for performing entity matching via SDK."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "6f4a3b15",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Establish client connection\n",
+    "client = CogniteClient(\n",
+    "    client_name=os.environ.get(\"CLIENT_NAME\"),\n",
+    "    token_client_id=os.environ.get(\"CLIENT_ID\"),\n",
+    "    token_client_secret=os.environ.get(\"CLIENT_SECRET\"),\n",
+    "    project=os.environ.get(\"PROJECT\"),\n",
+    "    base_url=os.environ.get(\"BASE_URL\"),\n",
+    "    token_scopes=os.environ.get(\"TOKEN_SCOPE\"),\n",
+    "    token_url=os.environ.get(\"TOKEN_URL\"),\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "e3c80286",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Retrieve resources to match\n",
+    "ts_list = client.time_series.list(data_set_external_ids=[\"DEMO\"], limit=None)\n",
+    "asset_list = client.assets.list(data_set_external_ids=[\"DEMO\"], limit=None)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "3cfe57e7",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Format time series data for matching\n",
+    "sources = [\n",
+    "    {\n",
+    "        \"id\": ts.id,\n",
+    "        \"name\": ts.name,\n",
+    "        \"description\": ts.description,\n",
+    "    }\n",
+    "    for ts in ts_list\n",
+    "]\n",
+    "\n",
+    "# Format asset data for matching\n",
+    "targets = [\n",
+    "    {\n",
+    "        \"id\": asset.id,\n",
+    "        \"name\": asset.name,\n",
+    "        \"description\": asset.description,\n",
+    "    }\n",
+    "    for asset in asset_list\n",
+    "]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f1e94cbe",
+   "metadata": {},
+   "source": [
+    "## Perform Entity Matching"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "94f34c60",
+   "metadata": {},
+   "source": [
+    "For simplicity, let's perform entity matching with an unsupervised model."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "d4bd6e8c",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Apply unsupervised model\n",
+    "model = client.entity_matching.fit(\n",
+    "    sources=sources,\n",
+    "    targets=targets,\n",
+    "    match_fields=[(\"name\", \"name\")],\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "8fc9adbc",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Perform entity matching\n",
+    "job = model.predict(score_threshold=0.5)\n",
+    "match_result = job.result"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b95ef3e5",
+   "metadata": {},
+   "source": [
+    "## Inspect Matches by Pattern"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "996786af",
+   "metadata": {},
+   "source": [
+    "Now that we have the match result, let's apply the entity match categorizer to group matches by pattern."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "444add7b",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Initialize entity match categorizer\n",
+    "match_categorizer = EntityMatchCategorizer(client)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "id": "752ff106",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Group matches by pattern\n",
+    "match_categorizer.group_matches_by_pattern(match_result, pattern_fields=(\"name\", \"name\"))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e2794e8e",
+   "metadata": {},
+   "source": [
+    "The categorizer allows us to retrieve the pattern groups as a `DataFrame`, which in turn allows us to examine them in different ways (e.g., sorting by average confidence score)."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "id": "86ccb199",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Collect results as a table\n",
+    "match_df = match_categorizer.to_pandas()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "id": "a0138433",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>pattern</th>\n",
+       "      <th>n_matches</th>\n",
+       "      <th>avg_score</th>\n",
+       "      <th>matches</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>[D1]L[D2].L -&gt; [D1]L[D2]</td>\n",
+       "      <td>899</td>\n",
+       "      <td>0.72</td>\n",
+       "      <td>[{'source': {'description': 'DEPROP REFLUX', '...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>[D1][L2][D3].L -&gt; [D1][L2][D3]</td>\n",
+       "      <td>868</td>\n",
+       "      <td>0.92</td>\n",
+       "      <td>[{'source': {'description': 'ACID WASH DRUM', ...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>[D1][L2]D.L -&gt; [D1][L2]D</td>\n",
+       "      <td>394</td>\n",
+       "      <td>0.63</td>\n",
+       "      <td>[{'source': {'description': 'CONT-3 REFRIG REC...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>[D1]LD[L2].[L3] -&gt; [D1][L3]D[L2]</td>\n",
+       "      <td>385</td>\n",
+       "      <td>0.72</td>\n",
+       "      <td>[{'source': {'description': 'OXID AIR ADDTN VL...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>[D1]LD.[L2] -&gt; [D1][L2]DL</td>\n",
+       "      <td>326</td>\n",
+       "      <td>0.62</td>\n",
+       "      <td>[{'source': {'description': 'ALKY DIB OH GC \"R...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>...</th>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>75</th>\n",
+       "      <td>[L1][D2]L[D2]L[D2]L.[L3] -&gt; [D2][L3]D[L1]</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0.67</td>\n",
+       "      <td>[{'source': {'description': 'TOTAL IC4 IN NC4 ...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>76</th>\n",
+       "      <td>D[L1][D2][L3].L.L -&gt; D[L1][D2][L3]</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0.61</td>\n",
+       "      <td>[{'source': {'description': 'DEPR MAKE-UP CAUS...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>77</th>\n",
+       "      <td>L[D1]L[D2]L.L[D1] -&gt; [D1]L[D2]</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0.52</td>\n",
+       "      <td>[{'source': {'description': 'DEP REFLUX LOSEL'...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>78</th>\n",
+       "      <td>D[L1][D2].L -&gt; [L1]-[D2]</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0.71</td>\n",
+       "      <td>[{'source': {'description': '49 PH COOLING TWR...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>79</th>\n",
+       "      <td>L[D1]L.[L2] -&gt; [D1][L2]DL</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0.71</td>\n",
+       "      <td>[{'source': {'description': 'CONTACTOR 4 TOTAL...</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>80 rows × 4 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                                      pattern  n_matches  avg_score  \\\n",
+       "0                    [D1]L[D2].L -> [D1]L[D2]        899       0.72   \n",
+       "1              [D1][L2][D3].L -> [D1][L2][D3]        868       0.92   \n",
+       "2                    [D1][L2]D.L -> [D1][L2]D        394       0.63   \n",
+       "3            [D1]LD[L2].[L3] -> [D1][L3]D[L2]        385       0.72   \n",
+       "4                   [D1]LD.[L2] -> [D1][L2]DL        326       0.62   \n",
+       "..                                        ...        ...        ...   \n",
+       "75  [L1][D2]L[D2]L[D2]L.[L3] -> [D2][L3]D[L1]          1       0.67   \n",
+       "76         D[L1][D2][L3].L.L -> D[L1][D2][L3]          1       0.61   \n",
+       "77             L[D1]L[D2]L.L[D1] -> [D1]L[D2]          1       0.52   \n",
+       "78                   D[L1][D2].L -> [L1]-[D2]          1       0.71   \n",
+       "79                  L[D1]L.[L2] -> [D1][L2]DL          1       0.71   \n",
+       "\n",
+       "                                              matches  \n",
+       "0   [{'source': {'description': 'DEPROP REFLUX', '...  \n",
+       "1   [{'source': {'description': 'ACID WASH DRUM', ...  \n",
+       "2   [{'source': {'description': 'CONT-3 REFRIG REC...  \n",
+       "3   [{'source': {'description': 'OXID AIR ADDTN VL...  \n",
+       "4   [{'source': {'description': 'ALKY DIB OH GC \"R...  \n",
+       "..                                                ...  \n",
+       "75  [{'source': {'description': 'TOTAL IC4 IN NC4 ...  \n",
+       "76  [{'source': {'description': 'DEPR MAKE-UP CAUS...  \n",
+       "77  [{'source': {'description': 'DEP REFLUX LOSEL'...  \n",
+       "78  [{'source': {'description': '49 PH COOLING TWR...  \n",
+       "79  [{'source': {'description': 'CONTACTOR 4 TOTAL...  \n",
+       "\n",
+       "[80 rows x 4 columns]"
+      ]
+     },
+     "execution_count": 10,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "match_df"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "574902c1",
+   "metadata": {},
+   "source": [
+    "Having the result as a `DataFrame`, we can query match patterns more easily."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "id": "1aabe489",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>pattern</th>\n",
+       "      <th>n_matches</th>\n",
+       "      <th>avg_score</th>\n",
+       "      <th>matches</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>[D1][L2][D3].L -&gt; [D1][L2][D3]</td>\n",
+       "      <td>868</td>\n",
+       "      <td>0.92</td>\n",
+       "      <td>[{'source': {'description': 'ACID WASH DRUM', ...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>7</th>\n",
+       "      <td>[D1][L2][D3]L.L -&gt; [D1][L2][D3]</td>\n",
+       "      <td>149</td>\n",
+       "      <td>0.80</td>\n",
+       "      <td>[{'source': {'description': 'MRU CHG DRUM LEVE...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9</th>\n",
+       "      <td>[D1]L[D2][L3].L -&gt; [D1]L[D2][L3]</td>\n",
+       "      <td>128</td>\n",
+       "      <td>0.82</td>\n",
+       "      <td>[{'source': {'description': 'RX BED H S/D (2-3...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>21</th>\n",
+       "      <td>[L1][D2]L.[L3] -&gt; [D2][L3]D[L1]</td>\n",
+       "      <td>37</td>\n",
+       "      <td>0.87</td>\n",
+       "      <td>[{'source': {'description': 'TOTAL FRESH ACID,...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>27</th>\n",
+       "      <td>[D1][L2][D3][L4].L -&gt; [D1][L2][D3][L4]</td>\n",
+       "      <td>12</td>\n",
+       "      <td>0.89</td>\n",
+       "      <td>[{'source': {'description': 'RX BED TEMP - 4FT...</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                                   pattern  n_matches  avg_score  \\\n",
+       "1           [D1][L2][D3].L -> [D1][L2][D3]        868       0.92   \n",
+       "7          [D1][L2][D3]L.L -> [D1][L2][D3]        149       0.80   \n",
+       "9         [D1]L[D2][L3].L -> [D1]L[D2][L3]        128       0.82   \n",
+       "21         [L1][D2]L.[L3] -> [D2][L3]D[L1]         37       0.87   \n",
+       "27  [D1][L2][D3][L4].L -> [D1][L2][D3][L4]         12       0.89   \n",
+       "\n",
+       "                                              matches  \n",
+       "1   [{'source': {'description': 'ACID WASH DRUM', ...  \n",
+       "7   [{'source': {'description': 'MRU CHG DRUM LEVE...  \n",
+       "9   [{'source': {'description': 'RX BED H S/D (2-3...  \n",
+       "21  [{'source': {'description': 'TOTAL FRESH ACID,...  \n",
+       "27  [{'source': {'description': 'RX BED TEMP - 4FT...  "
+      ]
+     },
+     "execution_count": 11,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# Pick out high-quality patterns\n",
+    "match_df.query(\"avg_score > 0.75 & n_matches > 10\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "4c27a3c3",
+   "metadata": {},
+   "source": [
+    "Furthermore, the categorizer allows us to inspect actual match cases in each pattern, helping to better determine if the pattern is valid."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "id": "22a0f8c8",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[GROUP]\n",
+      "pattern:       [D1]L[D2][L3].L -> [D1]L[D2][L3]\n",
+      "n_matches:            128\n",
+      "avg_score:           0.82\n",
+      "\n",
+      "[EXAMPLE]\n",
+      "score:   0.75\n",
+      "name -> name:   4TA6043D.PV -> 4TI6043D\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Insepct the 10th pattern group and its 1st match case ()\n",
+    "match_categorizer.inspect_pattern(i_pattern=9, j_example=0, compare_fields=[(\"name\", \"name\")])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "085b4c76",
+   "metadata": {},
+   "source": [
+    "We can compare more fields in source (time series) vs. target (asset) as well."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "id": "57618994",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[GROUP]\n",
+      "pattern:       [D1]L[D2][L3].L -> [D1]L[D2][L3]\n",
+      "n_matches:            128\n",
+      "avg_score:           0.82\n",
+      "\n",
+      "[EXAMPLE]\n",
+      "score:   0.75\n",
+      "name -> name:   4TA6043D.PV -> 4TI6043D\n",
+      "description -> description:   RX BED H S/D (2-3 N) -> 4TI6043D, RX BED TEMP - 2FT 3IN N\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Insepct the 10th pattern group and its 1st match case\n",
+    "match_categorizer.inspect_pattern(\n",
+    "    i_pattern=9,\n",
+    "    j_example=0,\n",
+    "    compare_fields=[\n",
+    "        (\"name\", \"name\"),\n",
+    "        (\"description\", \"description\")\n",
+    "    ]\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "af3849d4",
+   "metadata": {},
+   "source": [
+    "## Save Results"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c581650d",
+   "metadata": {},
+   "source": [
+    "Finally, the categorizer allows us to easily select patterns we want and save them into CDF."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "id": "6fcb949f",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "1008 matches have been saved to CDF!\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Save matches from selected patterns into CDF\n",
+    "match_categorizer.save_patterns_to_cdf(pattern_index_list=[1, 9, 27])"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "cog-dev",
+   "language": "python",
+   "name": "cog-dev"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.5"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

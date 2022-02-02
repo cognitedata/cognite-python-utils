@@ -1,0 +1,44 @@
+Setup
+=====
+
+To begin, let's get the code:
+
+.. code:: bash
+
+    $ git clone https://github.com/cognitedata/cognite-python-utils.git
+    $ cd cognite-python-utils
+
+The current project uses `poetry <https://python-poetry.org/docs/>`_ to manage
+dependencies among different Python packages, which is essential to reproducibility.
+
+First, ensure you are using the right version of Python (``^3.8``). We recommend you
+use `pyenv <https://github.com/pyenv/pyenv>`_ to effectively manage multiple versions
+of Python installation. You can then install ``poetry``:
+
+.. code:: bash
+
+    $ pip install poetry
+
+Once you clone the current repo into your local machine, you can go inside the repo and run:
+
+.. code:: bash
+
+    $ poetry install
+
+to install the right versions of packages for running scripts in the project repo.
+
+To use the new Python configuration that has been installed, you need to run:
+
+.. code:: bash
+
+    $ poetry shell
+
+which will activate the virtual environment for the project repo.
+
+You can simply type:
+
+.. code:: bash
+
+    $ exit
+
+to exit from the virtual environment and return to the global (or system) Python installation.

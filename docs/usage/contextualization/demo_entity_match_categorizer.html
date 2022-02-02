@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Entity Match Categorizer &mdash; cognite-utils 0.1.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="shortcut icon" href="../../_static/cognite_logo_black.png"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Infrastructure" href="../infrastructure/index.html" />
+    <link rel="prev" title="Contextualization" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> cognite-utils
+            <img src="../../_static/cognite_logo_white.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Usage</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Contextualization</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Entity Match Categorizer</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Setup">Setup</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Perform-Entity-Matching">Perform Entity Matching</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Inspect-Matches-by-Pattern">Inspect Matches by Pattern</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Save-Results">Save Results</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../infrastructure/index.html">Infrastructure</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/index.html">Development</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">cognite-utils</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Usage</a> &raquo;</li>
+          <li><a href="index.html">Contextualization</a> &raquo;</li>
+      <li>Entity Match Categorizer</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/usage/contextualization/demo_entity_match_categorizer.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt .copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<section id="Entity-Match-Categorizer">
+<h1>Entity Match Categorizer<a class="headerlink" href="#Entity-Match-Categorizer" title="Permalink to this headline"></a></h1>
+<p>Although entity matching in SDK offers greater flexibility, its utility is constrained by the lack of an easy way to group matches by pattern. As experience tells, strict reliance on the confidence score may be misleading; some matches have low confidence scores but in fact high-quality, while the reverse is the case for others. Hence, we need to pay attention to patterns underlying the matches. In this script, I demonstrate an entity match categorizer which helps to reproduce the “group by
+pattern” feature in UI, making SDK-based entity matching more effective.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">cognite.experimental</span> <span class="kn">import</span> <span class="n">CogniteClient</span>
+<span class="kn">from</span> <span class="nn">cognite.utils.contextualization</span> <span class="kn">import</span> <span class="n">EntityMatchCategorizer</span>
+</pre></div>
+</div>
+</div>
+<section id="Setup">
+<h2>Setup<a class="headerlink" href="#Setup" title="Permalink to this headline"></a></h2>
+<p>First, let’s set things up for performing entity matching via SDK.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Establish client connection</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">CogniteClient</span><span class="p">(</span>
+    <span class="n">client_name</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CLIENT_NAME&quot;</span><span class="p">),</span>
+    <span class="n">token_client_id</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CLIENT_ID&quot;</span><span class="p">),</span>
+    <span class="n">token_client_secret</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CLIENT_SECRET&quot;</span><span class="p">),</span>
+    <span class="n">project</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;PROJECT&quot;</span><span class="p">),</span>
+    <span class="n">base_url</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;BASE_URL&quot;</span><span class="p">),</span>
+    <span class="n">token_scopes</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;TOKEN_SCOPE&quot;</span><span class="p">),</span>
+    <span class="n">token_url</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;TOKEN_URL&quot;</span><span class="p">),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Retrieve resources to match</span>
+<span class="n">ts_list</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">time_series</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">data_set_external_ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;DEMO&quot;</span><span class="p">],</span> <span class="n">limit</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="n">asset_list</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">assets</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">data_set_external_ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;DEMO&quot;</span><span class="p">],</span> <span class="n">limit</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Format time series data for matching</span>
+<span class="n">sources</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">ts</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">ts</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">ts</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="n">ts</span> <span class="ow">in</span> <span class="n">ts_list</span>
+<span class="p">]</span>
+
+<span class="c1"># Format asset data for matching</span>
+<span class="n">targets</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">asset</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">asset</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">asset</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">asset_list</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Perform-Entity-Matching">
+<h2>Perform Entity Matching<a class="headerlink" href="#Perform-Entity-Matching" title="Permalink to this headline"></a></h2>
+<p>For simplicity, let’s perform entity matching with an unsupervised model.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Apply unsupervised model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">entity_matching</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
+    <span class="n">sources</span><span class="o">=</span><span class="n">sources</span><span class="p">,</span>
+    <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">,</span>
+    <span class="n">match_fields</span><span class="o">=</span><span class="p">[(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">)],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Perform entity matching</span>
+<span class="n">job</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">score_threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">match_result</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">result</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Inspect-Matches-by-Pattern">
+<h2>Inspect Matches by Pattern<a class="headerlink" href="#Inspect-Matches-by-Pattern" title="Permalink to this headline"></a></h2>
+<p>Now that we have the match result, let’s apply the entity match categorizer to group matches by pattern.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Initialize entity match categorizer</span>
+<span class="n">match_categorizer</span> <span class="o">=</span> <span class="n">EntityMatchCategorizer</span><span class="p">(</span><span class="n">client</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Group matches by pattern</span>
+<span class="n">match_categorizer</span><span class="o">.</span><span class="n">group_matches_by_pattern</span><span class="p">(</span><span class="n">match_result</span><span class="p">,</span> <span class="n">pattern_fields</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<p>The categorizer allows us to retrieve the pattern groups as a <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code>, which in turn allows us to examine them in different ways (e.g., sorting by average confidence score).</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Collect results as a table</span>
+<span class="n">match_df</span> <span class="o">=</span> <span class="n">match_categorizer</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">match_df</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>pattern</th>
+      <th>n_matches</th>
+      <th>avg_score</th>
+      <th>matches</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>[D1]L[D2].L -&gt; [D1]L[D2]</td>
+      <td>899</td>
+      <td>0.72</td>
+      <td>[{'source': {'description': 'DEPROP REFLUX', '...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>[D1][L2][D3].L -&gt; [D1][L2][D3]</td>
+      <td>868</td>
+      <td>0.92</td>
+      <td>[{'source': {'description': 'ACID WASH DRUM', ...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>[D1][L2]D.L -&gt; [D1][L2]D</td>
+      <td>394</td>
+      <td>0.63</td>
+      <td>[{'source': {'description': 'CONT-3 REFRIG REC...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>[D1]LD[L2].[L3] -&gt; [D1][L3]D[L2]</td>
+      <td>385</td>
+      <td>0.72</td>
+      <td>[{'source': {'description': 'OXID AIR ADDTN VL...</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>[D1]LD.[L2] -&gt; [D1][L2]DL</td>
+      <td>326</td>
+      <td>0.62</td>
+      <td>[{'source': {'description': 'ALKY DIB OH GC "R...</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>75</th>
+      <td>[L1][D2]L[D2]L[D2]L.[L3] -&gt; [D2][L3]D[L1]</td>
+      <td>1</td>
+      <td>0.67</td>
+      <td>[{'source': {'description': 'TOTAL IC4 IN NC4 ...</td>
+    </tr>
+    <tr>
+      <th>76</th>
+      <td>D[L1][D2][L3].L.L -&gt; D[L1][D2][L3]</td>
+      <td>1</td>
+      <td>0.61</td>
+      <td>[{'source': {'description': 'DEPR MAKE-UP CAUS...</td>
+    </tr>
+    <tr>
+      <th>77</th>
+      <td>L[D1]L[D2]L.L[D1] -&gt; [D1]L[D2]</td>
+      <td>1</td>
+      <td>0.52</td>
+      <td>[{'source': {'description': 'DEP REFLUX LOSEL'...</td>
+    </tr>
+    <tr>
+      <th>78</th>
+      <td>D[L1][D2].L -&gt; [L1]-[D2]</td>
+      <td>1</td>
+      <td>0.71</td>
+      <td>[{'source': {'description': '49 PH COOLING TWR...</td>
+    </tr>
+    <tr>
+      <th>79</th>
+      <td>L[D1]L.[L2] -&gt; [D1][L2]DL</td>
+      <td>1</td>
+      <td>0.71</td>
+      <td>[{'source': {'description': 'CONTACTOR 4 TOTAL...</td>
+    </tr>
+  </tbody>
+</table>
+<p>80 rows × 4 columns</p>
+</div></div>
+</div>
+<p>Having the result as a <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code>, we can query match patterns more easily.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Pick out high-quality patterns</span>
+<span class="n">match_df</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;avg_score &gt; 0.75 &amp; n_matches &gt; 10&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>pattern</th>
+      <th>n_matches</th>
+      <th>avg_score</th>
+      <th>matches</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1</th>
+      <td>[D1][L2][D3].L -&gt; [D1][L2][D3]</td>
+      <td>868</td>
+      <td>0.92</td>
+      <td>[{'source': {'description': 'ACID WASH DRUM', ...</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>[D1][L2][D3]L.L -&gt; [D1][L2][D3]</td>
+      <td>149</td>
+      <td>0.80</td>
+      <td>[{'source': {'description': 'MRU CHG DRUM LEVE...</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>[D1]L[D2][L3].L -&gt; [D1]L[D2][L3]</td>
+      <td>128</td>
+      <td>0.82</td>
+      <td>[{'source': {'description': 'RX BED H S/D (2-3...</td>
+    </tr>
+    <tr>
+      <th>21</th>
+      <td>[L1][D2]L.[L3] -&gt; [D2][L3]D[L1]</td>
+      <td>37</td>
+      <td>0.87</td>
+      <td>[{'source': {'description': 'TOTAL FRESH ACID,...</td>
+    </tr>
+    <tr>
+      <th>27</th>
+      <td>[D1][L2][D3][L4].L -&gt; [D1][L2][D3][L4]</td>
+      <td>12</td>
+      <td>0.89</td>
+      <td>[{'source': {'description': 'RX BED TEMP - 4FT...</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>Furthermore, the categorizer allows us to inspect actual match cases in each pattern, helping to better determine if the pattern is valid.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Insepct the 10th pattern group and its 1st match case ()</span>
+<span class="n">match_categorizer</span><span class="o">.</span><span class="n">inspect_pattern</span><span class="p">(</span><span class="n">i_pattern</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">j_example</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">compare_fields</span><span class="o">=</span><span class="p">[(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">)])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[GROUP]
+pattern:       [D1]L[D2][L3].L -&gt; [D1]L[D2][L3]
+n_matches:            128
+avg_score:           0.82
+
+[EXAMPLE]
+score:   0.75
+name -&gt; name:   4TA6043D.PV -&gt; 4TI6043D
+</pre></div></div>
+</div>
+<p>We can compare more fields in source (time series) vs. target (asset) as well.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Insepct the 10th pattern group and its 1st match case</span>
+<span class="n">match_categorizer</span><span class="o">.</span><span class="n">inspect_pattern</span><span class="p">(</span>
+    <span class="n">i_pattern</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span>
+    <span class="n">j_example</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">compare_fields</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;description&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">)</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[GROUP]
+pattern:       [D1]L[D2][L3].L -&gt; [D1]L[D2][L3]
+n_matches:            128
+avg_score:           0.82
+
+[EXAMPLE]
+score:   0.75
+name -&gt; name:   4TA6043D.PV -&gt; 4TI6043D
+description -&gt; description:   RX BED H S/D (2-3 N) -&gt; 4TI6043D, RX BED TEMP - 2FT 3IN N
+</pre></div></div>
+</div>
+</section>
+<section id="Save-Results">
+<h2>Save Results<a class="headerlink" href="#Save-Results" title="Permalink to this headline"></a></h2>
+<p>Finally, the categorizer allows us to easily select patterns we want and save them into CDF.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Save matches from selected patterns into CDF</span>
+<span class="n">match_categorizer</span><span class="o">.</span><span class="n">save_patterns_to_cdf</span><span class="p">(</span><span class="n">pattern_index_list</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">27</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+1008 matches have been saved to CDF!
+</pre></div></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Contextualization" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../infrastructure/index.html" class="btn btn-neutral float-right" title="Infrastructure" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Cognite AS.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

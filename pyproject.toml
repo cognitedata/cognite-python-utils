@@ -1,0 +1,40 @@
+[tool.poetry]
+name = "cognite-utils"
+version = "0.1.0"
+description = "Python Utilities Extending the Use of Cognite Products"
+authors = [
+    "Sangyoon Park <sangyoon.park@cognite.com>",
+    "Cole Howard <cole.howard@cognite.com>",
+    "Viet Le <viet.le@cognite.com>"
+]
+readme = "README.md"
+license = "Apache-2.0"
+packages = [
+    { include = "cognite" }
+]
+
+[tool.black]
+line-length = 120
+target_version = ['py37']
+include = '\.py$'
+
+[tool.isort]
+profile = "black"
+line_length = 120
+
+[tool.poetry.dependencies]
+python = "^3.8"
+cognite-sdk = "^2.38.4"
+cognite-sdk-experimental = "^0.60.37"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+pre-commit = "^2.16.0"
+Sphinx = "^4.4.0"
+sphinx-rtd-theme = "^1.0.0"
+nbsphinx = "^0.8.8"
+ipython = "^8.0.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

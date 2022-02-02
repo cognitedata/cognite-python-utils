@@ -1,0 +1,1 @@
+from cognite.utils.contextualization._entity_match_categorizer import EntityMatchCategorizer
