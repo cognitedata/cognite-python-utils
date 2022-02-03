@@ -8,6 +8,8 @@ authors = [
     "Viet Le <viet.le@cognite.com>"
 ]
 readme = "README.md"
+homepage = "https://cognitedata.github.io/cognite-python-utils/"
+repository = "https://github.com/cognitedata/cognite-python-utils"
 license = "Apache-2.0"
 packages = [
     { include = "cognite" }

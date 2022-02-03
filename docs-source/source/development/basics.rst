@@ -1,15 +1,15 @@
 Basics
 ======
 
-Setup
------
-
 To begin, let's get the code:
 
 .. code:: bash
 
     $ git clone https://github.com/cognitedata/cognite-python-utils.git
     $ cd cognite-python-utils
+
+Managing Dependencies
+---------------------
 
 The current project uses `poetry <https://python-poetry.org/docs/>`_ to manage
 dependencies among different Python packages, which is essential to reproducibility.
@@ -22,29 +22,51 @@ of Python installation. You can then install ``poetry``:
 
     $ pip install poetry
 
-Once you clone the current repo into your local machine, you can go inside the repo and run:
+Once you clone the project repo, go to its root and run:
 
 .. code:: bash
 
     $ poetry install
 
-to install the right versions of packages for running scripts in the project repo.
+to install correct dependencies for the project.
 
-To use the new Python configuration that has been installed, you need to run:
+To activate the virtual environment, run:
 
 .. code:: bash
 
     $ poetry shell
 
-which will activate the virtual environment for the project repo.
+To add a new dependency, run:
 
-You can simply type:
+.. code:: bash
+
+    $ poetry add <new-package-name>
+
+Finally, you can type:
 
 .. code:: bash
 
     $ exit
 
-to exit from the virtual environment and return to the global (or system) Python installation.
+to exit from the virtual environment.
+
+Running Pre-Commit Hooks
+------------------------
+
+Consistent coding standards enable effective code review and maintenance. Hence, we strongly recommend
+you use pre-commit hooks set for the project. You can install them by running:
+
+.. code:: bash
+
+    $ pre-commit install
+
+Then, whenever you are about to make a new commit, run:
+
+.. code:: bash
+
+    $ pre-commit run --all-files
+
+to automatically apply coding standards set for the project.
 
 Updating Project Documentation
 ------------------------------
