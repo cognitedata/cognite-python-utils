@@ -47,7 +47,6 @@
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Development</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="basics.html">Basics</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Recommended Practices</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#run-pre-commit-hooks">Run Pre-Commit Hooks</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#organize-each-pr-with-relevant-changes">Organize Each PR with Relevant Changes</a></li>
 </ul>
 </li>
@@ -107,19 +106,6 @@
 </style>
 <section id="recommended-practices">
 <h1>Recommended Practices<a class="headerlink" href="#recommended-practices" title="Permalink to this headline"></a></h1>
-<section id="run-pre-commit-hooks">
-<h2>Run Pre-Commit Hooks<a class="headerlink" href="#run-pre-commit-hooks" title="Permalink to this headline"></a></h2>
-<p>Consistent coding standards enable effective code review and maintenance. Hence, we strongly recommend
-you use pre-commit hooks set for the project. You can install them by running:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pre-commit install
-</pre></div>
-</div>
-<p>Then, whenever you are about to make a new commit, run:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pre-commit run --all-files
-</pre></div>
-</div>
-<p>to automatically apply coding standards set for the project.</p>
-</section>
 <section id="organize-each-pr-with-relevant-changes">
 <h2>Organize Each PR with Relevant Changes<a class="headerlink" href="#organize-each-pr-with-relevant-changes" title="Permalink to this headline"></a></h2>
 <p>To maintain a linear/cleaner project history, the project was set up to apply “squashing” when merging a PR.

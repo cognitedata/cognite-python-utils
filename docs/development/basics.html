@@ -46,7 +46,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Reference</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Development</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Basics</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#setup">Setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#managing-dependencies">Managing Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#running-pre-commit-hooks">Running Pre-Commit Hooks</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#updating-project-documentation">Updating Project Documentation</a></li>
 </ul>
 </li>
@@ -107,13 +108,13 @@
 </style>
 <section id="basics">
 <h1>Basics<a class="headerlink" href="#basics" title="Permalink to this headline"></a></h1>
-<section id="setup">
-<h2>Setup<a class="headerlink" href="#setup" title="Permalink to this headline"></a></h2>
 <p>To begin, let’s get the code:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/cognitedata/cognite-python-utils.git
 $ <span class="nb">cd</span> cognite-python-utils
 </pre></div>
 </div>
+<section id="managing-dependencies">
+<h2>Managing Dependencies<a class="headerlink" href="#managing-dependencies" title="Permalink to this headline"></a></h2>
 <p>The current project uses <a class="reference external" href="https://python-poetry.org/docs/">poetry</a> to manage
 dependencies among different Python packages, which is essential to reproducibility.</p>
 <p>First, ensure you are using the right version of Python (<code class="docutils literal notranslate"><span class="pre">^3.8</span></code>). We recommend you
@@ -122,21 +123,37 @@ of Python installation. You can then install <code class="docutils literal notra
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pip install poetry
 </pre></div>
 </div>
-<p>Once you clone the current repo into your local machine, you can go inside the repo and run:</p>
+<p>Once you clone the project repo, go to its root and run:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ poetry install
 </pre></div>
 </div>
-<p>to install the right versions of packages for running scripts in the project repo.</p>
-<p>To use the new Python configuration that has been installed, you need to run:</p>
+<p>to install correct dependencies for the project.</p>
+<p>To activate the virtual environment, run:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ poetry shell
 </pre></div>
 </div>
-<p>which will activate the virtual environment for the project repo.</p>
-<p>You can simply type:</p>
+<p>To add a new dependency, run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ poetry add &lt;new-package-name&gt;
+</pre></div>
+</div>
+<p>Finally, you can type:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ <span class="nb">exit</span>
 </pre></div>
 </div>
-<p>to exit from the virtual environment and return to the global (or system) Python installation.</p>
+<p>to exit from the virtual environment.</p>
+</section>
+<section id="running-pre-commit-hooks">
+<h2>Running Pre-Commit Hooks<a class="headerlink" href="#running-pre-commit-hooks" title="Permalink to this headline"></a></h2>
+<p>Consistent coding standards enable effective code review and maintenance. Hence, we strongly recommend
+you use pre-commit hooks set for the project. You can install them by running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pre-commit install
+</pre></div>
+</div>
+<p>Then, whenever you are about to make a new commit, run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pre-commit run --all-files
+</pre></div>
+</div>
+<p>to automatically apply coding standards set for the project.</p>
 </section>
 <section id="updating-project-documentation">
 <h2>Updating Project Documentation<a class="headerlink" href="#updating-project-documentation" title="Permalink to this headline"></a></h2>

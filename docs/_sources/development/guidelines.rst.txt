@@ -1,24 +1,6 @@
 Recommended Practices
 =====================
 
-Run Pre-Commit Hooks
---------------------
-
-Consistent coding standards enable effective code review and maintenance. Hence, we strongly recommend
-you use pre-commit hooks set for the project. You can install them by running:
-
-.. code:: bash
-
-    $ pre-commit install
-
-Then, whenever you are about to make a new commit, run:
-
-.. code:: bash
-
-    $ pre-commit run --all-files
-
-to automatically apply coding standards set for the project.
-
 Organize Each PR with Relevant Changes
 --------------------------------------
 
