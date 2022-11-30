@@ -15,7 +15,9 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -75,10 +77,10 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Usage</a> &raquo;</li>
-          <li><a href="index.html">Contextualization</a> &raquo;</li>
-      <li>Entity Match Categorizer</li>
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Usage</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Contextualization</a></li>
+      <li class="breadcrumb-item active">Entity Match Categorizer</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/usage/contextualization/demo_entity_match_categorizer.ipynb.txt" rel="nofollow"> View page source</a>
       </li>
@@ -198,10 +200,11 @@ div.nboutput.container div.prompt > div {
     }
 }
 
-/* disable scrollbars on prompts */
+/* disable scrollbars and line breaks on prompts */
 div.nbinput.container div.prompt pre,
 div.nboutput.container div.prompt pre {
     overflow: hidden;
+    white-space: pre;
 }
 
 /* input/output area */
@@ -303,6 +306,7 @@ div.nboutput.container div.output_area > div[class^='highlight']{
 }
 
 /* Some additional styling taken form the Jupyter notebook CSS */
+.jp-RenderedHTMLCommon table,
 div.rendered_html table {
   border: none;
   border-collapse: collapse;
@@ -311,10 +315,14 @@ div.rendered_html table {
   font-size: 12px;
   table-layout: fixed;
 }
+.jp-RenderedHTMLCommon thead,
 div.rendered_html thead {
   border-bottom: 1px solid black;
   vertical-align: bottom;
 }
+.jp-RenderedHTMLCommon tr,
+.jp-RenderedHTMLCommon th,
+.jp-RenderedHTMLCommon td,
 div.rendered_html tr,
 div.rendered_html th,
 div.rendered_html td {
@@ -326,12 +334,15 @@ div.rendered_html td {
   max-width: none;
   border: none;
 }
+.jp-RenderedHTMLCommon th,
 div.rendered_html th {
   font-weight: bold;
 }
+.jp-RenderedHTMLCommon tbody tr:nth-child(odd),
 div.rendered_html tbody tr:nth-child(odd) {
   background: #f5f5f5;
 }
+.jp-RenderedHTMLCommon tbody tr:hover,
 div.rendered_html tbody tr:hover {
   background: rgba(66, 165, 245, 0.2);
 }
@@ -359,7 +370,7 @@ div.rendered_html tbody tr:hover {
 }
 </style>
 <section id="Entity-Match-Categorizer">
-<h1>Entity Match Categorizer<a class="headerlink" href="#Entity-Match-Categorizer" title="Permalink to this headline"></a></h1>
+<h1>Entity Match Categorizer<a class="headerlink" href="#Entity-Match-Categorizer" title="Permalink to this heading"></a></h1>
 <p>Although entity matching in SDK offers greater flexibility, its utility is constrained by the lack of an easy way to group matches by pattern. As experience tells, strict reliance on the confidence score may be misleading; some matches have low confidence scores but in fact high-quality, while the reverse is the case for others. Hence, we need to pay attention to patterns underlying the matches. In this script, I demonstrate an entity match categorizer which helps to reproduce the “group by
 pattern” feature in UI, making SDK-based entity matching more effective.</p>
 <div class="nbinput nblast docutils container">
@@ -373,7 +384,7 @@ pattern” feature in UI, making SDK-based entity matching more effective.</p>
 </div>
 </div>
 <section id="Setup">
-<h2>Setup<a class="headerlink" href="#Setup" title="Permalink to this headline"></a></h2>
+<h2>Setup<a class="headerlink" href="#Setup" title="Permalink to this heading"></a></h2>
 <p>First, let’s set things up for performing entity matching via SDK.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
@@ -430,7 +441,7 @@ pattern” feature in UI, making SDK-based entity matching more effective.</p>
 </div>
 </section>
 <section id="Perform-Entity-Matching">
-<h2>Perform Entity Matching<a class="headerlink" href="#Perform-Entity-Matching" title="Permalink to this headline"></a></h2>
+<h2>Perform Entity Matching<a class="headerlink" href="#Perform-Entity-Matching" title="Permalink to this heading"></a></h2>
 <p>For simplicity, let’s perform entity matching with an unsupervised model.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
@@ -457,7 +468,7 @@ pattern” feature in UI, making SDK-based entity matching more effective.</p>
 </div>
 </section>
 <section id="Inspect-Matches-by-Pattern">
-<h2>Inspect Matches by Pattern<a class="headerlink" href="#Inspect-Matches-by-Pattern" title="Permalink to this headline"></a></h2>
+<h2>Inspect Matches by Pattern<a class="headerlink" href="#Inspect-Matches-by-Pattern" title="Permalink to this heading"></a></h2>
 <p>Now that we have the match result, let’s apply the entity match categorizer to group matches by pattern.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
@@ -746,7 +757,7 @@ description -&gt; description:   RX BED H S/D (2-3 N) -&gt; 4TI6043D, RX BED TEM
 </div>
 </section>
 <section id="Save-Results">
-<h2>Save Results<a class="headerlink" href="#Save-Results" title="Permalink to this headline"></a></h2>
+<h2>Save Results<a class="headerlink" href="#Save-Results" title="Permalink to this heading"></a></h2>
 <p>Finally, the categorizer allows us to easily select patterns we want and save them into CDF.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:

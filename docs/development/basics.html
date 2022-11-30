@@ -15,7 +15,9 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -48,6 +50,7 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Basics</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#managing-dependencies">Managing Dependencies</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#running-pre-commit-hooks">Running Pre-Commit Hooks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#unit-testing">Unit Testing</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#updating-project-documentation">Updating Project Documentation</a></li>
 </ul>
 </li>
@@ -70,9 +73,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">Development</a> &raquo;</li>
-      <li>Basics</li>
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Development</a></li>
+      <li class="breadcrumb-item active">Basics</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/development/basics.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -107,14 +110,14 @@
 }
 </style>
 <section id="basics">
-<h1>Basics<a class="headerlink" href="#basics" title="Permalink to this headline"></a></h1>
+<h1>Basics<a class="headerlink" href="#basics" title="Permalink to this heading"></a></h1>
 <p>To begin, let’s get the code:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/cognitedata/cognite-python-utils.git
 $ <span class="nb">cd</span> cognite-python-utils
 </pre></div>
 </div>
 <section id="managing-dependencies">
-<h2>Managing Dependencies<a class="headerlink" href="#managing-dependencies" title="Permalink to this headline"></a></h2>
+<h2>Managing Dependencies<a class="headerlink" href="#managing-dependencies" title="Permalink to this heading"></a></h2>
 <p>The current project uses <a class="reference external" href="https://python-poetry.org/docs/">poetry</a> to manage
 dependencies among different Python packages, which is essential to reproducibility.</p>
 <p>First, ensure you are using the right version of Python (<code class="docutils literal notranslate"><span class="pre">^3.8</span></code>). We recommend you
@@ -143,7 +146,7 @@ of Python installation. You can then install <code class="docutils literal notra
 <p>to exit from the virtual environment.</p>
 </section>
 <section id="running-pre-commit-hooks">
-<h2>Running Pre-Commit Hooks<a class="headerlink" href="#running-pre-commit-hooks" title="Permalink to this headline"></a></h2>
+<h2>Running Pre-Commit Hooks<a class="headerlink" href="#running-pre-commit-hooks" title="Permalink to this heading"></a></h2>
 <p>Consistent coding standards enable effective code review and maintenance. Hence, we strongly recommend
 you use pre-commit hooks set for the project. You can install them by running:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pre-commit install
@@ -155,8 +158,20 @@ you use pre-commit hooks set for the project. You can install them by running:</
 </div>
 <p>to automatically apply coding standards set for the project.</p>
 </section>
+<section id="unit-testing">
+<h2>Unit Testing<a class="headerlink" href="#unit-testing" title="Permalink to this heading"></a></h2>
+<p>Each utility should come with unit tests to ensure usable code beyond dependency updates. Hence, we
+strongly recommend you use pytest standards for each utility. You can find example unit tests in
+the .tests/tests_unit directory.</p>
+<p>Implement unit tests with a new file per utility, with monkeypatch_cognite_client() where necessary.</p>
+<p>Then, whenever you are about to make a new commit, run:
+.. code:: bash</p>
+<blockquote>
+<div><p>$ pytest -v tests</p>
+</div></blockquote>
+</section>
 <section id="updating-project-documentation">
-<h2>Updating Project Documentation<a class="headerlink" href="#updating-project-documentation" title="Permalink to this headline"></a></h2>
+<h2>Updating Project Documentation<a class="headerlink" href="#updating-project-documentation" title="Permalink to this heading"></a></h2>
 <p>The current project’s documentation is generated using <a class="reference external" href="https://www.sphinx-doc.org/en/master/">Sphinx</a>
 and hosted on <a class="reference external" href="https://pages.github.com/">GitHub Pages</a>.
 To update it, make changes in <code class="docutils literal notranslate"><span class="pre">docs-source</span></code> directory and run:</p>
@@ -167,6 +182,12 @@ $ cp -r ./build/html/* ../docs
 </pre></div>
 </div>
 <p>which will update build artifacts used by GitHub Pages.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Note: If making documents for the first time, the <code class="docutils literal notranslate"><span class="pre">Jupyter</span></code> notebooks require Pandoc to
+make the html documentation. To install Pandoc on your local machine,
+see <a class="reference external" href="https://pandoc.org/installing.html">https://pandoc.org/installing.html</a></p>
+</div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>When adding demo <code class="docutils literal notranslate"><span class="pre">Jupyter</span></code> notebooks, please ensure that the outputs do not include

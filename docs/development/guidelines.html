@@ -15,7 +15,9 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -68,9 +70,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">Development</a> &raquo;</li>
-      <li>Recommended Practices</li>
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Development</a></li>
+      <li class="breadcrumb-item active">Recommended Practices</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/development/guidelines.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -105,9 +107,9 @@
 }
 </style>
 <section id="recommended-practices">
-<h1>Recommended Practices<a class="headerlink" href="#recommended-practices" title="Permalink to this headline"></a></h1>
+<h1>Recommended Practices<a class="headerlink" href="#recommended-practices" title="Permalink to this heading"></a></h1>
 <section id="organize-each-pr-with-relevant-changes">
-<h2>Organize Each PR with Relevant Changes<a class="headerlink" href="#organize-each-pr-with-relevant-changes" title="Permalink to this headline"></a></h2>
+<h2>Organize Each PR with Relevant Changes<a class="headerlink" href="#organize-each-pr-with-relevant-changes" title="Permalink to this heading"></a></h2>
 <p>To maintain a linear/cleaner project history, the project was set up to apply “squashing” when merging a PR.
 That is, if a PR contains more than one commit, GitHub will combine them into a single commit where the summary
 equals the PR title (followed by the PR number) and the description consists of commit messages for all squashed

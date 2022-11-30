@@ -68,6 +68,20 @@ Then, whenever you are about to make a new commit, run:
 
 to automatically apply coding standards set for the project.
 
+Unit Testing
+------------------------
+
+Each utility should come with unit tests to ensure usable code beyond dependency updates. Hence, we
+strongly recommend you use pytest standards for each utility. You can find example unit tests in
+the .tests/tests_unit directory.
+
+Implement unit tests with a new file per utility, with monkeypatch_cognite_client() where necessary.
+
+Then, whenever you are about to make a new commit, run:
+.. code:: bash
+
+    $ pytest -v tests
+
 Updating Project Documentation
 ------------------------------
 
@@ -83,6 +97,11 @@ To update it, make changes in ``docs-source`` directory and run:
     $ cp -r ./build/html/* ../docs
 
 which will update build artifacts used by GitHub Pages.
+
+.. warning::
+    Note: If making documents for the first time, the ``Jupyter`` notebooks require Pandoc to
+    make the html documentation. To install Pandoc on your local machine, 
+    see https://pandoc.org/installing.html
 
 .. warning::
     When adding demo ``Jupyter`` notebooks, please ensure that the outputs do not include

@@ -9,8 +9,8 @@ from cognite.utils._logging import logger
 
 
 class EntityMatchCategorizer:
-    """Although entity matching in SDK offers greater flexibility, its utility is constrained by 
-    the lack of an easy way to group matches by pattern. EntityMatchCategorizer helps to reproduce 
+    """Although entity matching in SDK offers greater flexibility, its utility is constrained by
+    the lack of an easy way to group matches by pattern. EntityMatchCategorizer helps to reproduce
     the "group by pattern" feature in UI, making SDK-based entity matching more effective.
 
     Args:
@@ -33,7 +33,11 @@ class EntityMatchCategorizer:
 
         # Reformat match data
         matches = [
-            {"source": item["source"], "target": item["matches"][0]["target"], "score": item["matches"][0]["score"],}
+            {
+                "source": item["source"],
+                "target": item["matches"][0]["target"],
+                "score": item["matches"][0]["score"],
+            }
             for item in match_result["items"]
             if len(item["matches"]) > 0
         ]
