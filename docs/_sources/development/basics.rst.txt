@@ -78,6 +78,7 @@ the .tests/tests_unit directory.
 Implement unit tests with a new file per utility, with monkeypatch_cognite_client() where necessary.
 
 Then, whenever you are about to make a new commit, run:
+
 .. code:: bash
 
     $ pytest -v tests
