@@ -16,13 +16,19 @@ def match_result():
         "items": [
             {
                 "matches": [
-                    {"score": 0.75, "target": {"description": "Description for Asset 1", "id": 1, "name": "Asset 1"},}
+                    {
+                        "score": 0.75,
+                        "target": {"description": "Description for Asset 1", "id": 1, "name": "Asset 1"},
+                    }
                 ],
                 "source": {"description": "Description for Time series A", "id": 1000, "name": "Time series A"},
             },
             {
                 "matches": [
-                    {"score": 0.5, "target": {"description": "Description for Asset 2", "id": 2, "name": "Asset 2"},}
+                    {
+                        "score": 0.5,
+                        "target": {"description": "Description for Asset 2", "id": 2, "name": "Asset 2"},
+                    }
                 ],
                 "source": {"description": "Description for Time series B", "id": 2000, "name": "Time series B"},
             },
@@ -54,7 +60,12 @@ def mock_cognite_client():
 class TestEntityMatchCategorizer:
     @pytest.mark.parametrize(
         "pattern_fields",
-        [("name", "name"), ("name", "description"), ("description", "name"), ("description", "description"),],
+        [
+            ("name", "name"),
+            ("name", "description"),
+            ("description", "name"),
+            ("description", "description"),
+        ],
     )
     def test_group_matches(self, mock_cognite_client, match_result, pattern_fields):
         client = CogniteClient()
